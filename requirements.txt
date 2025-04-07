@@ -1,0 +1,6 @@
+streamlit
+openai
+gensim
+faiss-cpu
+rank_bm25
+python-dotenv

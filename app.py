@@ -139,6 +139,7 @@ elif authentication_status:
             df = pd.read_csv(log_file)
             df = pd.concat([df, pd.DataFrame([log_entry])], ignore_index=True)
             df.to_csv(log_file, index=False)
+            
 
     # ---- Query Box ----
     query = st.text_input("📜 Enter your legal question:")
@@ -155,6 +156,7 @@ elif authentication_status:
                 response = generate_response(query, results)
 
                 log_user_query(username, query, response)
+                
 
                 st.markdown("### 📚 Relevant Sections:")
                 for i, doc in enumerate(results):
@@ -162,7 +164,9 @@ elif authentication_status:
 
                 st.markdown("### 💬 Chatbot Answer:")
                 st.success(response)
+                
                 # ---- Show Chat History for Logged-in User ----
+                
 if os.path.exists("logs/user_logs.csv"):
     df = pd.read_csv("logs/user_logs.csv")
     user_history = df[df["Username"] == username]
@@ -174,4 +178,15 @@ if os.path.exists("logs/user_logs.csv"):
                 st.markdown(f"**🧠 Answer:** {row['Response']}")
     else:
         st.info("ℹ️ You have no saved chat history yet.")
+        
+def delete_user_history(username):
+    log_file = "logs/user_logs.csv"
+    if os.path.exists(log_file):
+        df = pd.read_csv(log_file)
+        df = df[df["Username"] != username]  # keep all but current user
+        df.to_csv(log_file, index=False)
+if st.button("🗑️ Delete My History"):
+    delete_user_history(username)
+    st.success("✅ Your chat history has been deleted.")
+
 

@@ -150,6 +150,29 @@ def generate_response(query, context):
                 {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion:\n{query}"}
             ]
         )
+        from datetime import datetime
+import pandas as pd
+
+# Logging function
+def log_user_query(username, query, response):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = {
+        "Username": username,
+        "Timestamp": timestamp,
+        "Query": query,
+        "Response": response
+    }
+    log_file = "logs/user_logs.csv"
+
+    # Append or create
+    if not os.path.exists(log_file):
+        df = pd.DataFrame([log_entry])
+        df.to_csv(log_file, index=False)
+    else:
+        df = pd.read_csv(log_file)
+        df = pd.concat([df, pd.DataFrame([log_entry])], ignore_index=True)
+        df.to_csv(log_file, index=False)
+
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"❌ OpenAI API error: {e}"
@@ -167,6 +190,8 @@ if query:
         else:
             results = hybrid_retrieve(query, w2v, faiss_idx, bm25_idx, valid_docs)
             response = generate_response(query, results)
+            log_user_query(username, query, response)
+
 
             st.markdown("### 📚 Top Relevant Sections Retrieved:")
             for i, doc in enumerate(results):

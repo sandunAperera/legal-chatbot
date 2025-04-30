@@ -1,0 +1,10 @@
+credentials:
+  usernames: {}
+
+cookie:
+  name: legora_login
+  key: secret_key
+  expiry_days: 1
+
+preauthorized:
+  emails: []

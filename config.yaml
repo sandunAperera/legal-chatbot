@@ -1,10 +1,12 @@
-credentials:
-  usernames: {}
-
 cookie:
-  name: legora_login
-  key: secret_key
   expiry_days: 1
-
+  key: secret_key
+  name: legora_login
+credentials:
+  usernames:
+    vinsuka:
+      email: v@chat.com
+      name: vinsuka
+      password: $2b$12$wbu/fcmAEsbRPVKZoP.7Ne22NtUI3.5D2jetkOPcPT4Q7UA4GiHFa
 preauthorized:
   emails: []

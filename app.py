@@ -6,13 +6,54 @@ from gensim.models import Word2Vec
 from rank_bm25 import BM25Okapi
 from dotenv import load_dotenv
 import openai
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
+
+
 
 # Load API key from .env
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # --- Style Customization ---
-st.set_page_config(page_title="Legora | Legal Chatbot", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="Legal Chatbot", page_icon="🤖", layout="centered")
+
+# ---- Load user login config ----
+with open("config.yaml") as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config["credentials"],
+    config["cookie"]["name"],
+    config["cookie"]["key"],
+    config["cookie"]["expiry_days"]
+)
+
+# Login widget
+name, authentication_status, username = authenticator.login(location='main', fields={'Form name': 'Login'})
+
+
+
+
+
+if authentication_status is False:
+    st.error("❌ Incorrect username or password.")
+elif authentication_status is None:
+    st.warning("🟡 Please enter your username and password.")
+elif authentication_status:
+    authenticator.logout("🚪 Logout", "sidebar")
+    st.sidebar.success(f"👋 Welcome, {name}")
+    
+    # ✅ From here, show the chatbot app
+    st.title("🇱🇰 Sri Lankan Constitution Legal Chatbot")
+    st.markdown("Ask a legal question in **Sinhala or English**. The system retrieves relevant sections and responds using GPT-4.")
+    
+    # 👉 Leave your full chatbot code (query input, document load, search etc.) here as-is
+
 
 # ---- HEADER SECTION ----
 st.markdown("""
